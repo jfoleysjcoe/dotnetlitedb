@@ -17,19 +17,13 @@ namespace MyStore.Controllers
 		}
 
 		[HttpGet()]
-		public ActionResult<IEnumerable<InventoryItem>> GetItems() {
-			return Ok(_service.GetInventoryFixed());
-		}
+		public ActionResult<IEnumerable<InventoryItem>> GetItems() => Ok(_service.GetInventoryFixed());
 
 		[HttpPost("insert")]
-		public ActionResult<int> InsertInventoryItem(InventoryItem item) {
-			return Ok(_service.InsertInventoryFixed(item));
-		}
+		public ActionResult<int> InsertInventoryItem(InventoryItem item) => Ok(_service.InsertInventoryFixed(item));
 
 		[HttpDelete("{id}")]
-		public ActionResult<bool> DeleteInventoryItem(int id) {
-			return Ok(_service.DeleteInventoryFixed(id));
-		}
+		public ActionResult<bool> DeleteInventoryItem(int id) => Ok(_service.DeleteInventoryFixed(id));
 
 	}
 }
