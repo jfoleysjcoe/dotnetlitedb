@@ -1,5 +1,5 @@
 # .Net Core API with LiteDB
-Last Updated: 3/2/2020
+Last Updated: 3/3/2020
 
 ## Ideologies
 
@@ -110,7 +110,7 @@ Identify scope and purpose
 	[Route("api/[controller]")]
 	public class InventoryController : ControllerBase
 	{
-		[HttpGet()] // default route ".../api/[controller]
+		[HttpGet()] // default route ".../api/inventory
 		public IEnumerable<InventoryItem> Get() {...}
 
 		[HttpGet("{id}")] // .../api/inventory/3
@@ -197,6 +197,7 @@ public class InventoryItem
 	public string Sku { get; set; }
 	public string StorageLocation { get; set; }
 	public int Quantity { get; set; }
+	public int IsSaleItem { get; set; }
 	[BsonIgnore] public bool HasDescription => Description != null && Description != "";
 }
 ```
