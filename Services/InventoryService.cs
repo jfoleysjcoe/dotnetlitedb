@@ -7,7 +7,51 @@ namespace MyStore.Services
 {
 	public class InventoryService
 	{
-		private List<InventoryItem> fixedData = new List<InventoryItem> {
+		ILiteCollection<InventoryItem> InventoryItems { get; set; }
+		readonly InventoryFixedDataService _fixedDataService;
+
+		public InventoryService(LiteDatabase database, InventoryFixedDataService fixedService)
+		{
+			InventoryItems = database.GetCollection<InventoryItem>("inventoryItem");
+			_fixedDataService = fixedService;
+		}
+
+		#region Fixed Data
+		public List<InventoryItem> GetInventoryFixed() => _fixedDataService.fixedData;
+
+		public int InsertInventoryFixed(InventoryItem item)
+		{
+			var lastId = _fixedDataService.fixedData.AsEnumerable().OrderByDescending(x => x.Id).First().Id;
+			item.Id = lastId + 1;
+			_fixedDataService.fixedData.Add(item);
+			return item.Id;
+		}
+
+		public bool DeleteInventoryFixed(int id)
+		{
+			var index = _fixedDataService.fixedData.FindIndex(x => x.Id == id);
+			if (index >= 0)
+			{
+				_fixedDataService.fixedData.RemoveAt(index);
+				return true;
+			}
+			else
+				return false;
+		}
+		#endregion
+
+		#region LiteDb Data
+		public IEnumerable<InventoryItem> GetInventory() => InventoryItems.Query().ToEnumerable();
+
+		public int InsertInventory(InventoryItem item) => InventoryItems.Insert(item).AsInt32;
+
+		public bool DeleteInventory(int id) => InventoryItems.Delete(id);
+		#endregion
+	}
+
+	public class InventoryFixedDataService
+	{
+		public List<InventoryItem> fixedData = new List<InventoryItem> {
 			new InventoryItem(1, "#2 pencil", "Pencil", .50, "38830982031", "A1", 100),
 			new InventoryItem(2, "spiral notebook", "Notebook", 1.50, "3881111131", "A2", 50),
 			new InventoryItem(3, "3 ring binder with dividers", "Binder", 4.50, "54830982031", "A2", 5),
@@ -16,55 +60,5 @@ namespace MyStore.Services
 			new InventoryItem(6, "metallic coaster", "Coaster", 1.50, "388309212", "A6", 1),
 			new InventoryItem(7, "Fuzzy backpack", "Backpack", 24.50, "388309987", "A5", 100)
 		};
-		ILiteCollection<InventoryItem> InventoryItems { get; set; }
-		public InventoryService(LiteDatabase database)
-		{
-			InventoryItems = database.GetCollection<InventoryItem>("inventoryItem");
-		}
-
-		public List<InventoryItem> GetInventoryFixed()
-		{
-			return fixedData;
-		}
-
-		public int InsertInventoryFixed(InventoryItem item)
-		{
-			var lastId = fixedData.AsEnumerable().OrderByDescending(x => x.Id).First().Id;
-			item.Id = lastId + 1;
-			fixedData.Add(item);
-			return item.Id;
-		}
-
-		public bool DeleteInventoryFixed(int id)
-		{
-			var index = fixedData.FindIndex(x => x.Id == id);
-			if (index >= 0)
-			{
-				fixedData.RemoveAt(index);
-				return true;
-			}
-			else
-				return false;
-		}
-
-
-
-
-
-		public IEnumerable<InventoryItem> GetInventory()
-		{
-			return InventoryItems.Query().ToEnumerable();
-		}
-
-		public int InsertInventory(InventoryItem item)
-		{
-			var id = InventoryItems.Insert(item);
-			return id.AsInt32;
-		}
-
-		public bool DeleteInventory(int id)
-		{
-			return InventoryItems.Delete(id);
-		}
 	}
 }

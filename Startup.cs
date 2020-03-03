@@ -28,9 +28,10 @@ namespace MyStore
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllers();
-
-			services.AddSingleton<InventoryService>();
+			services.AddSingleton<InventoryFixedDataService>();
 			services.AddSingleton<LiteDatabase>(new LiteDatabase(@"Filename=./Data/LiteDb.db;Mode=Shared"));
+
+			services.AddScoped<InventoryService>();
 
 		}
 
