@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using LiteDB;
+using Microsoft.Extensions.Logging;
 using MyStore.Models;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace MyStore.Services
 {
@@ -9,9 +11,10 @@ namespace MyStore.Services
 	{
 		ILiteCollection<InventoryItem> InventoryItems { get; set; }
 		readonly InventoryFixedDataService _fixedDataService;
-
-		public InventoryService(LiteDatabase database, InventoryFixedDataService fixedService)
+		readonly ILogger<InventoryService> _logger;
+		public InventoryService(ILogger<InventoryService> logger, LiteDatabase database, InventoryFixedDataService fixedService)
 		{
+			_logger = logger;
 			InventoryItems = database.GetCollection<InventoryItem>("inventoryItem");
 			_fixedDataService = fixedService;
 		}
@@ -21,6 +24,7 @@ namespace MyStore.Services
 
 		public int InsertInventoryFixed(InventoryItem item)
 		{
+			_logger.LogInformation(JsonSerializer.Serialize(item));
 			var lastId = _fixedDataService.fixedData.AsEnumerable().OrderByDescending(x => x.Id).First().Id;
 			item.Id = lastId + 1;
 			_fixedDataService.fixedData.Add(item);
