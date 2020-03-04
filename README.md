@@ -140,7 +140,8 @@ Creating a service involves 3 parts.
 	public void ConfigureServices(IServiceCollection services)
 	{
 		...
-		services.AddScoped<InventoryController>();
+		services.AddScoped<InventoryService>();
+		services.AddSingleton<InventoryFixedDataService>();
 	}
 	```
 
