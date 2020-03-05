@@ -127,7 +127,9 @@ Identify scope and purpose
 
 2. Controller Return types
 
-	Most common are `ActionResult`, `JsonResult`, `ContentResult`.
+	Most common are `IActionResult`, `JsonResult`, `ContentResult`.
+
+	In our example api lecture, we simple returned the content being requests. Which was usually `IEnumerable<Type>`, `int` or `bool`.
 
 ### Services
 

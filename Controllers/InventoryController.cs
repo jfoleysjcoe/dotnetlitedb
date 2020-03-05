@@ -9,29 +9,77 @@ namespace MyStore.Controllers
 	[Route("[controller]")]
 	public class InventoryController : ControllerBase
 	{
-		private readonly InventoryService _service;
-		private readonly InventoryFixedDataService _fixedService;
+		readonly InventoryFixedDataService _fixedService;
+		readonly InventoryService _service;
 
-		public InventoryController(InventoryService inventory, InventoryFixedDataService fixedDataService)
+		public InventoryController(
+			InventoryFixedDataService fixedService,
+			InventoryService service
+		)
 		{
-			_service = inventory;
-			_fixedService = fixedDataService;
+			_fixedService = fixedService;
+			_service = service;
 		}
 
-		[HttpGet()]
-		public ActionResult<IEnumerable<InventoryItem>> GetItems() => Ok(_fixedService.fixedData);
+		[HttpGet("populate")]
+		public int PopulateData()
+		{
+			var fixedData = _fixedService.fixedData;
+			return _service.PopulateData(fixedData);
+		}
 
-		[HttpPost("insert")]
-		public ActionResult<int> InsertInventoryItem(InventoryItem item) => Ok(_fixedService.Insert(item));
+		[HttpGet]
+		public IEnumerable<InventoryItem> GetInventoryItems()
+		{
+			// return _fixedService.fixedData;
+			return _service.getInventoryItems();
+		}
+
+		[HttpGet("{id}")]
+		public InventoryItem GetInventoryItem(int id)
+		{
+			// return _fixedService.fixedData.AsEnumerable().First(x => x.Id == id);
+			return _service.GetInventoryItemById(id);
+		}
+
+		[HttpPost]
+		public int AddInventoryItem(InventoryItem item)
+		{
+			// return _fixedService.Insert(item);
+			return _service.Insert(item);
+		}
 
 		[HttpDelete("{id}")]
-		public ActionResult<bool> DeleteInventoryItem(int id) => Ok(_fixedService.Delete(id));
+		public bool DeleteInventoryItem(int id)
+		{
+			//return _fixedService.Delete(id);
+			return _service.Delete(id);
+		}
 
 		[HttpPost("update")]
-		public InventoryItem Update(InventoryItem item) => _fixedService.Update(item);
+		public InventoryItem Update(InventoryItem item)
+		{
+			//return _fixedService.Update(item);
+			return _service.Update(item);
+		}
 
 		[HttpGet("findBelowPrice/{price}")]
-		public IEnumerable<InventoryItem> FindBelowPrice(double price) => _fixedService.GetItemsLessThan(price);
+		public IEnumerable<InventoryItem> FindBelowPrice(double price)
+		{
+			// return _fixedService.GetItemsLessThan(price);
+			return _service.GetItemsLessThan(price);
+		}
 
+		[HttpPost("update/name")]
+		public bool UpdateName(ChangeNameRequest request)
+		{
+			return _service.UpdateName(request);
+		}
+
+		[HttpGet("ItemsInLocation/{location}")]
+		public IEnumerable<ChangeNameRequest> GetNameAndIdInLocation(string location)
+		{
+			return _service.GetNameAndIdsInStorageLocation(location);
+		}
 	}
 }
